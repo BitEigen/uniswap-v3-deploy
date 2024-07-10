@@ -1,5 +1,5 @@
 {
-  "name": "@uniswap/deploy-v3",
+  "name": "@biteigen/uniswap-v3-deploy",
   "version": "1.0.4",
   "description": "Deploy Uniswap V3 smart contracts",
   "bin": "dist/index.js",
@@ -23,18 +23,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Uniswap/deploy-v3.git"
+    "url": "git+https://github.com/BitEigen/uniswap-v3-deploy.git"
   },
   "author": {
-    "email": "contact@uniswap.org",
-    "name": "Uniswap Labs",
-    "url": "https://uniswap.org"
+    "email": "contact@biteigen.xyz",
+    "name": "BitEigen",
+    "url": "https://biteigen.xyz/"
   },
   "license": "GPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/Uniswap/deploy-v3/issues"
+    "url": "https://github.com/BitEigen/uniswap-v3-deploy/issues"
   },
-  "homepage": "https://uniswap.org",
+  "homepage": "https://biteigen.xyz/",
   "devDependencies": {
     "@ethersproject/abstract-signer": "^5.5.0",
     "@ethersproject/address": "^5.5.0",
