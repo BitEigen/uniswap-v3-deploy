@@ -1,8 +1,13 @@
-import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
-import "./tasks/index"
+import "dotenv/config";
+import { HardhatUserConfig } from "hardhat/config";
+import "./tasks/index";
 
 const DEFAULT_MNEMONIC = "test test test test test test test test test test test junk";
+const privateKey = process.env.PRIVATE_KEY;
+if (!privateKey) {
+    throw new Error("private key not found");
+}
 
 const config: HardhatUserConfig = {
   // solidity: "0.8.24",
@@ -26,12 +31,7 @@ const config: HardhatUserConfig = {
     biteigen: {
       url: "https://rpc-testnet.biteigen.xyz",
       chainId: 1022,
-      accounts: {
-        mnemonic: process.env.MNEMONIC || DEFAULT_MNEMONIC,
-        path: "m/44'/60'/0'/0",
-        initialIndex: 0,
-        count: 20,
-      },
+      accounts: [`0x${privateKey}`]
     },
   },
   etherscan: {

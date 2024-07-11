@@ -38,23 +38,17 @@ export default function createDeployContractStep({
         config.signer
       )
 
-      // const factory = await ethers.getContractFactory(
-      //   abi as any,
-      //   linkReferences && computeLibraries
-      //     ? linkLibraries({ bytecode, linkReferences }, computeLibraries(state, config))
-      //     : bytecode,
-      //   config.signer
-      // )
-
       let contract
       try {
         contract = await factory.deploy(...constructorArgs, { gasPrice: config.gasPrice })
+        await contract.waitForDeployment()
       } catch (error) {
         console.error(`Failed to deploy ${contractName}`)
         throw error
       }
 
-      const tx = await contract.waitForDeployment();
+      // contract.deploymentTransaction()?.wait(config.numOfConfirmations);
+
       const contractAddr = await contract.getAddress();
 
       state[key] = contractAddr
@@ -63,7 +57,7 @@ export default function createDeployContractStep({
         {
           message: `Contract ${contractName} deployed`,
           address: contractAddr,
-          hash: tx.deploymentTransaction()?.hash
+          hash: contract.deploymentTransaction()?.hash
         },
       ]
     } else {

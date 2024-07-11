@@ -3,12 +3,14 @@ import deploy from "../src/deploy";
 import { MigrationState } from "../src/migrations";
 import { asciiStringToBytes32 } from "../src/util/asciiStringToBytes32";
 import fs from "fs";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-
-task("deploy-uniswap", "Deploys Uniswap V3 contracts", async (args, hre) => {
+async function deployUniswap(taskArgs: { weth9: string, confirmations: number },
+  hre: HardhatRuntimeEnvironment) {
   const { ethers } = hre;
-  const weth9Address = ethers.ZeroAddress;
+  const weth9Address = ethers.getAddress(taskArgs.weth9)
   const [signer] = await ethers.getSigners();
+  const confirmations = taskArgs.confirmations ?? 0
 
   let state: MigrationState = {};
 
@@ -22,7 +24,6 @@ task("deploy-uniswap", "Deploys Uniswap V3 contracts", async (args, hre) => {
   const nativeCurrencyLabelBytes = asciiStringToBytes32("ETH");
   const v2CoreFactoryAddress = ethers.ZeroAddress;
   const ownerAddress = await signer.getAddress();
-  const confirmations = 2;
 
   const results = []
   const generator = deploy({
@@ -41,19 +42,24 @@ task("deploy-uniswap", "Deploys Uniswap V3 contracts", async (args, hre) => {
     results.push(result)
 
     // wait 15 minutes for any transactions sent in the step
-    await Promise.all(
-      result.map(
-        (stepResult) => {
-          if (stepResult.hash) {
-            // return wallet.provider.waitForTransaction(stepResult.hash, confirmations, /* 15 minutes */ 1000 * 60 * 15)
-          } else {
-            return Promise.resolve(true)
-          }
-        }
-      )
-    )
+    // await Promise.all(
+    //   result.map(
+    //     (stepResult) => {
+    //       if (stepResult.hash) {
+    //         console.log(`Wait for ${confirmations} block confirmations for ${stepResult.hash}`)
+    //         return ethers.getDefaultProvider().waitForTransaction(stepResult.hash, confirmations, /* 15 minutes */ 1000 * 60 * 15)
+    //       } else {
+    //         return Promise.resolve(true)
+    //       }
+    //     }
+    //   )
+    // )
   }
 
   return results
+};
 
-});
+task("deploy-uniswap", "Deploys Uniswap V3 contracts")
+  .addParam<string>("weth9", "weth9 address")
+  .addOptionalParam<number>("confirmations", "number of confirmations to wait for")
+  .setAction(deployUniswap);

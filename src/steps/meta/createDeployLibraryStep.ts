@@ -13,7 +13,7 @@ export default function createDeployLibraryStep({
       const factory = new ContractFactory(abi, bytecode, signer)
 
       const library = await factory.deploy({ gasPrice })
-      const tx = await library.waitForDeployment();
+      await library.waitForDeployment();
       const libraryAddr = await library.getAddress();
       state[key] = libraryAddr
 
@@ -21,7 +21,7 @@ export default function createDeployLibraryStep({
         {
           message: `Library ${contractName} deployed`,
           address: libraryAddr,
-          hash: tx.deploymentTransaction()?.hash
+          hash: library.deploymentTransaction()?.hash
         },
       ]
     } else {
