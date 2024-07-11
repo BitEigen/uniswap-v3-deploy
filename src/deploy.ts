@@ -1,5 +1,4 @@
-import { Signer } from '@ethersproject/abstract-signer'
-import { BigNumber } from '@ethersproject/bignumber'
+import { Signer } from 'ethers'
 import { migrate } from './migrate'
 import { MigrationState, MigrationStep, StepOutput } from './migrations'
 import { ADD_1BP_FEE_TIER } from './steps/add-1bp-fee-tier'
@@ -39,7 +38,7 @@ const MIGRATION_STEPS: MigrationStep[] = [
 
 export default function deploy({
   signer,
-  gasPrice: numberGasPrice,
+  gasPrice,
   initialState,
   onStateChange,
   weth9Address,
@@ -48,7 +47,7 @@ export default function deploy({
   ownerAddress,
 }: {
   signer: Signer
-  gasPrice: number | undefined
+  gasPrice: BigInt
   weth9Address: string
   nativeCurrencyLabelBytes: string
   v2CoreFactoryAddress: string
@@ -56,8 +55,8 @@ export default function deploy({
   initialState: MigrationState
   onStateChange: (newState: MigrationState) => Promise<void>
 }): AsyncGenerator<StepOutput[], void, void> {
-  const gasPrice =
-    typeof numberGasPrice === 'number' ? BigNumber.from(numberGasPrice).mul(BigNumber.from(10).pow(9)) : undefined // convert to wei
+  // const gasPrice =
+  //   typeof numberGasPrice === 'number' ? BigNumber.from(numberGasPrice).mul(BigNumber.from(10).pow(9)) : undefined // convert to wei
 
   return migrate({
     steps: MIGRATION_STEPS,

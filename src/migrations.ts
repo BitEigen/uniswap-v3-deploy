@@ -1,5 +1,4 @@
-import { Signer } from '@ethersproject/abstract-signer'
-import { BigNumber } from '@ethersproject/bignumber'
+import { Signer } from 'ethers'
 import { GenericMigrationStep } from './migrate'
 
 export interface MigrationState {
@@ -21,7 +20,7 @@ export type StepOutput = { message: string; hash?: string; address?: string }
 
 export type MigrationConfig = {
   signer: Signer
-  gasPrice: BigNumber | undefined
+  gasPrice: BigInt
   weth9Address: string
   nativeCurrencyLabelBytes: string
   v2CoreFactoryAddress: string

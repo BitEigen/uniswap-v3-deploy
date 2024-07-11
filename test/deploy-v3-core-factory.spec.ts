@@ -1,23 +1,21 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { Contract } from '@ethersproject/contracts'
-import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
+import { Contract } from 'ethers'
 
 import UniswapV3Factory from '@uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/UniswapV3Factory.json'
 import { expect } from 'chai'
+import { Signer } from "ethers"
+import hre from "hardhat"
 import { DEPLOY_V3_CORE_FACTORY } from '../src/steps/deploy-v3-core-factory'
 import { asciiStringToBytes32 } from '../src/util/asciiStringToBytes32'
 
 const DUMMY_ADDRESS = '0x9999999999999999999999999999999999999999'
-
-const ganache = require('ganache-cli')
+const { ethers } = hre;
 
 describe('deploy-v3-core-factory', () => {
-  let provider: Web3Provider
-  let signer: JsonRpcSigner
+  let signer: Signer
 
-  before('create provider', () => {
-    provider = new Web3Provider(ganache.provider())
-    signer = provider.getSigner()
+  before('create provider', async () => {
+    signer = (await ethers.getSigners())[0]
+    console.log("before: ", await signer.getAddress());
   })
 
   function singleElem<T>(v: T[]): T {
@@ -31,7 +29,7 @@ describe('deploy-v3-core-factory', () => {
           {},
           {
             signer,
-            gasPrice: BigNumber.from(1),
+            gasPrice: BigInt(1),
             ownerAddress: DUMMY_ADDRESS,
             v2CoreFactoryAddress: DUMMY_ADDRESS,
             weth9Address: DUMMY_ADDRESS,
@@ -48,7 +46,7 @@ describe('deploy-v3-core-factory', () => {
           { v3CoreFactoryAddress: DUMMY_ADDRESS },
           {
             signer,
-            gasPrice: BigNumber.from(1),
+            gasPrice: BigInt(1),
             ownerAddress: DUMMY_ADDRESS,
             v2CoreFactoryAddress: DUMMY_ADDRESS,
             weth9Address: DUMMY_ADDRESS,
@@ -68,7 +66,7 @@ describe('deploy-v3-core-factory', () => {
             {},
             {
               signer,
-              gasPrice: BigNumber.from(1),
+              gasPrice: BigInt(1),
               ownerAddress: DUMMY_ADDRESS,
               v2CoreFactoryAddress: DUMMY_ADDRESS,
               weth9Address: DUMMY_ADDRESS,
@@ -76,7 +74,7 @@ describe('deploy-v3-core-factory', () => {
             }
           )
         )
-        v3CoreFactory = new Contract(result.address!, UniswapV3Factory.abi, provider)
+        v3CoreFactory = await ethers.getContractAt(UniswapV3Factory.abi, result.address!)
       })
 
       it('points to signer address', async () => {

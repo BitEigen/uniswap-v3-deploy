@@ -1,4 +1,4 @@
-import { Contract, ContractInterface, ContractFactory } from '@ethersproject/contracts'
+import { ContractFactory, InterfaceAbi } from 'ethers'
 import { MigrationConfig, MigrationState, MigrationStep } from '../../migrations'
 import linkLibraries from '../../util/linkLibraries'
 
@@ -13,7 +13,7 @@ export default function createDeployContractStep({
   key: keyof MigrationState
   artifact: {
     contractName: string
-    abi: ContractInterface
+    abi: InterfaceAbi
     bytecode: string
     linkReferences?: { [fileName: string]: { [contractName: string]: { length: number; start: number }[] } }
   }
@@ -38,7 +38,15 @@ export default function createDeployContractStep({
         config.signer
       )
 
-      let contract: Contract
+      // const factory = await ethers.getContractFactory(
+      //   abi as any,
+      //   linkReferences && computeLibraries
+      //     ? linkLibraries({ bytecode, linkReferences }, computeLibraries(state, config))
+      //     : bytecode,
+      //   config.signer
+      // )
+
+      let contract
       try {
         contract = await factory.deploy(...constructorArgs, { gasPrice: config.gasPrice })
       } catch (error) {
@@ -46,13 +54,16 @@ export default function createDeployContractStep({
         throw error
       }
 
-      state[key] = contract.address
+      const tx = await contract.waitForDeployment();
+      const contractAddr = await contract.getAddress();
+
+      state[key] = contractAddr
 
       return [
         {
           message: `Contract ${contractName} deployed`,
-          address: contract.address,
-          hash: contract.deployTransaction.hash,
+          address: contractAddr,
+          hash: tx.deploymentTransaction()?.hash
         },
       ]
     } else {

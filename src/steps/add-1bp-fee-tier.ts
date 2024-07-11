@@ -1,5 +1,5 @@
 import UniswapV3Factory from '@uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/UniswapV3Factory.json'
-import { Contract } from '@ethersproject/contracts'
+import { Contract } from 'ethers'
 import { MigrationStep } from '../migrations'
 
 const ONE_BP_FEE = 100
