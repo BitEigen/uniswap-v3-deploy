@@ -6,12 +6,21 @@ import "./tasks/index";
 const DEFAULT_MNEMONIC = "test test test test test test test test test test test junk";
 const privateKey = process.env.PRIVATE_KEY;
 if (!privateKey) {
-    throw new Error("private key not found");
+  throw new Error("private key not found");
 }
 
 const config: HardhatUserConfig = {
   // solidity: "0.8.24",
-  solidity: "0.7.6",
+  solidity: {
+    compilers: [
+      {
+        version: "0.7.6",
+      },
+      {
+        version: "0.4.18",
+      },
+    ]
+  },
   networks: {
     hardhat: {
       initialDate: "0",
@@ -32,6 +41,11 @@ const config: HardhatUserConfig = {
       url: "https://rpc-testnet.biteigen.xyz",
       chainId: 1022,
       accounts: [`0x${privateKey}`]
+    },
+    rsk: {
+      url: "https://public-node.testnet.rsk.co",
+      chainId: 31,
+      accounts: [`0x${privateKey}`],
     },
   },
   etherscan: {

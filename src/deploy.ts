@@ -16,7 +16,6 @@ import { DEPLOY_V3_STAKER } from './steps/deploy-v3-staker';
 import { DEPLOY_V3_SWAP_ROUTER_02 } from './steps/deploy-v3-swap-router-02';
 import { TRANSFER_PROXY_ADMIN } from './steps/transfer-proxy-admin';
 import { TRANSFER_V3_CORE_FACTORY_OWNER } from './steps/transfer-v3-core-factory-owner';
-import WETH9 from "./util/WETH9.json";
 
 const MIGRATION_STEPS: MigrationStep[] = [
   // must come first, for address calculations
@@ -67,8 +66,7 @@ export default function deploy({
   })
 }
 
-export async function deployWETH9(signer: Signer) {
-  const factory = new ContractFactory(WETH9.abi, WETH9.bytecode, signer);
+export async function deployWETH9(artifact: {abi: any[], bytecode: string}, signer: Signer) {
+  const factory = new ContractFactory(artifact.abi, artifact.bytecode, signer);
   return await factory.deploy();
 }
-
