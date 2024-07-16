@@ -33,8 +33,8 @@ const config: HardhatUserConfig = {
         count: 20,
       },
       // forking: {
-      //   url: "https://eth-mainnet.public.blastapi.io",
-      //   blockNumber: 20266478
+      //   url: "https://rpc-testnet.biteigen.xyz",
+      //   blockNumber: 218877
       // }
     },
     biteigen: {

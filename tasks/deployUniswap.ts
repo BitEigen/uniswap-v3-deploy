@@ -5,12 +5,11 @@ import { asciiStringToBytes32 } from "../src/util/asciiStringToBytes32";
 import fs from "fs";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-async function deployUniswap(taskArgs: { weth9: string, confirmations: number },
+async function deployUniswap(taskArgs: { weth9: string },
   hre: HardhatRuntimeEnvironment) {
   const { ethers } = hre;
   const weth9Address = ethers.getAddress(taskArgs.weth9)
   const [signer] = await ethers.getSigners();
-  const confirmations = taskArgs.confirmations ?? 0
 
   let state: MigrationState = {};
 
@@ -40,20 +39,6 @@ async function deployUniswap(taskArgs: { weth9: string, confirmations: number },
   for await (const result of generator) {
     console.log(`Step ${step++} complete`, result)
     results.push(result)
-
-    // wait 15 minutes for any transactions sent in the step
-    // await Promise.all(
-    //   result.map(
-    //     (stepResult) => {
-    //       if (stepResult.hash) {
-    //         console.log(`Wait for ${confirmations} block confirmations for ${stepResult.hash}`)
-    //         return ethers.getDefaultProvider().waitForTransaction(stepResult.hash, confirmations, /* 15 minutes */ 1000 * 60 * 15)
-    //       } else {
-    //         return Promise.resolve(true)
-    //       }
-    //     }
-    //   )
-    // )
   }
 
   return results
@@ -61,5 +46,4 @@ async function deployUniswap(taskArgs: { weth9: string, confirmations: number },
 
 task("deploy-uniswap", "Deploys Uniswap V3 contracts")
   .addParam<string>("weth9", "weth9 address")
-  .addOptionalParam<number>("confirmations", "number of confirmations to wait for")
   .setAction(deployUniswap);

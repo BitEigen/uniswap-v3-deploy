@@ -13,7 +13,8 @@
     "postbuild": "cat shebang.txt dist/index.js > dist/index.cmd.js && mv dist/index.cmd.js dist/index.js",
     "prestart": "yarn build",
     "start": "node dist/index.js",
-    "prepublishOnly": "yarn build"
+    "prepublishOnly": "yarn build",
+    "postinstall": "typechain --out-dir typechain-types --target ethers-v6 ./node_modules/@uniswap/v3-core/artifacts/contracts/**/*.json ./node_modules/@uniswap/v3-periphery/artifacts/contracts/**/*.json"
   },
   "files": [
     "dist/"
@@ -37,7 +38,7 @@
   "homepage": "https://biteigen.xyz/",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "@uniswap/sdk-core": "^1.0.8",
+    "@uniswap/sdk-core": "^5.3.1",
     "@uniswap/swap-router-contracts": "1.1.0",
     "@uniswap/v3-core": "1.0.0",
     "@uniswap/v3-periphery": "1.1.1",
@@ -50,6 +51,8 @@
     "v3-periphery-1_3_0": "npm:@uniswap/v3-periphery@1.3.0"
   },
   "dependencies": {
+    "@uniswap/v3-sdk": "^3.13.1",
+    "bignumber.js": "^9.0.1",
     "dotenv": "^16.4.5"
   }
 }
