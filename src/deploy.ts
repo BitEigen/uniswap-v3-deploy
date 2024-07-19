@@ -66,7 +66,8 @@ export default function deploy({
   })
 }
 
-export async function deployWETH9(artifact: {abi: any[], bytecode: string}, signer: Signer) {
+export async function deployToken(artifact: {abi: any[], bytecode: string}, signer: Signer) {
   const factory = new ContractFactory(artifact.abi, artifact.bytecode, signer);
   return await factory.deploy();
 }
+

@@ -3,7 +3,7 @@ import bn from 'bignumber.js';
 import { expect } from 'chai';
 import { BigNumberish, Signer } from 'ethers';
 import hre, { ethers } from 'hardhat';
-import deploy, { deployWETH9 } from '../src/deploy';
+import deploy, { deployToken } from '../src/deploy';
 import { MigrationState, StepOutput } from '../src/migrations';
 import { asciiStringToBytes32 } from '../src/util/asciiStringToBytes32';
 import { UniswapV3Factory__factory, UniswapV3Pool__factory } from '../typechain-types/factories/v3-core/artifacts/contracts';
@@ -48,7 +48,7 @@ describe('Test uniswap functions', () => {
 
     // deploy WETH
     const weth9Artifac = await hre.artifacts.readArtifact("WETH9")
-    const weth9 = await deployWETH9(weth9Artifac, signer);
+    const weth9 = await deployToken(weth9Artifac, signer);
     weth9Address = await weth9.getAddress()
   })
 
@@ -141,37 +141,37 @@ describe('Test uniswap functions', () => {
   });
 
   // this test is not working yet
-  // it('Swap usdt for usdc', async () => {
-  //   expect(finalState.v3CoreFactoryAddress).to.not.be.undefined
-  //   expect(finalState.swapRouter02).to.not.be.undefined
-  //
-  //   const tetherContract = await ethers.getContractAt("Tether", tetherAddress);
-  //   const usdcContract = await ethers.getContractAt("USDCoin", usdcAddress);
-  //   const uniswapFactory = UniswapV3Factory__factory.connect(finalState.v3CoreFactoryAddress ?? '', signer);
-  //   const swapRouter = SwapRouter__factory.connect(finalState.swapRouter02 ?? '', signer);
-  //
-  //   await tetherContract.connect(signer2).approve(finalState.swapRouter02 ?? '', ethers.parseEther("100"));
-  //
-  //   const tokenIn = tetherAddress;
-  //   const tokenOut = usdcAddress;
-  //   const poolAddress = await uniswapFactory.getPool(tokenIn, tokenOut, FeeAmount.LOW);
-  //   const poolContract = UniswapV3Pool__factory.connect(poolAddress, signer);
-  //
-  //   const params: ISwapRouter.ExactInputSingleParamsStruct = {
-  //     tokenIn: tokenIn,
-  //     tokenOut: tokenOut,
-  //     fee: FeeAmount.LOW,
-  //     recipient: await signer.getAddress(),
-  //     deadline: Math.floor(Date.now() / 1000) + (60 * 10),
-  //     amountIn: ethers.parseEther("1"),
-  //     amountOutMinimum: 0,
-  //     sqrtPriceLimitX96: 0
-  //   };
-  //
-  //   const tx = await swapRouter.connect(signer2).exactInputSingle(params, { gasLimit: 1000000 });
-  //   await tx.wait();
-  //
-  // });
+  it('Swap usdt for usdc', async () => {
+    expect(finalState.v3CoreFactoryAddress).to.not.be.undefined
+    expect(finalState.swapRouter02).to.not.be.undefined
+
+    const tetherContract = await ethers.getContractAt("Tether", tetherAddress);
+    const usdcContract = await ethers.getContractAt("USDCoin", usdcAddress);
+    const uniswapFactory = UniswapV3Factory__factory.connect(finalState.v3CoreFactoryAddress ?? '', signer);
+    const swapRouter = SwapRouter__factory.connect(finalState.swapRouter02 ?? '', signer);
+
+    await tetherContract.connect(signer2).approve(finalState.swapRouter02 ?? '', ethers.parseEther("100"));
+
+    const tokenIn = tetherAddress;
+    const tokenOut = usdcAddress;
+    const poolAddress = await uniswapFactory.getPool(tokenIn, tokenOut, FeeAmount.LOW);
+    const poolContract = UniswapV3Pool__factory.connect(poolAddress, signer);
+
+    const params: ISwapRouter.ExactInputSingleParamsStruct = {
+      tokenIn: tokenIn,
+      tokenOut: tokenOut,
+      fee: FeeAmount.LOW,
+      recipient: await signer.getAddress(),
+      deadline: Math.floor(Date.now() / 1000) + (60 * 10),
+      amountIn: ethers.parseEther("1"),
+      amountOutMinimum: 0,
+      sqrtPriceLimitX96: 0
+    };
+
+    const tx = await swapRouter.connect(signer2).exactInputSingle(params, { gasLimit: 1000000 });
+    await tx.wait();
+
+  });
 })
 
 function encodePriceSqrt(reserve1: BigNumberish, reserve0: BigNumberish) {

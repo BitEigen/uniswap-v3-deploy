@@ -32,10 +32,10 @@ const config: HardhatUserConfig = {
         initialIndex: 0,
         count: 20,
       },
-      // forking: {
-      //   url: "https://rpc-testnet.biteigen.xyz",
-      //   blockNumber: 218877
-      // }
+      forking: {
+        url: "https://rpc-testnet.biteigen.xyz",
+        blockNumber: 218877
+      }
     },
     biteigen: {
       url: "https://rpc-testnet.biteigen.xyz",
