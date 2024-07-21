@@ -11,7 +11,7 @@ import { NonfungiblePositionManager__factory, SwapRouter__factory } from '../typ
 import { UniswapV3Pool } from '../typechain-types/v3-core/artifacts/contracts';
 import { INonfungiblePositionManager } from '../typechain-types/v3-periphery/artifacts/contracts/NonfungiblePositionManager';
 import { ISwapRouter } from '../typechain-types/v3-periphery/artifacts/contracts/SwapRouter';
-import { token } from '../typechain-types/@openzeppelin/contracts';
+import { produceWithPatches } from 'immer';
 
 bn.config({ EXPONENTIAL_AT: 999999, DECIMAL_PLACES: 40 })
 
@@ -45,6 +45,7 @@ describe('Test uniswap functions', () => {
     usdcAddress = await usdc.getAddress();
     usdc.mint(signer.getAddress(), ethers.parseEther("10000"));
     usdc.mint(signer1.getAddress(), ethers.parseEther("10000"));
+    usdc.mint(signer2.getAddress(), ethers.parseEther("10000"));
 
     // deploy WETH
     const weth9Artifac = await hre.artifacts.readArtifact("WETH9")
@@ -140,26 +141,18 @@ describe('Test uniswap functions', () => {
     console.log("pool data before add liquidity: ", newPoolData);
   });
 
-  // this test is not working yet
-  it('Swap usdt for usdc', async () => {
+  it('Swap usdc for usdt', async () => {
     expect(finalState.v3CoreFactoryAddress).to.not.be.undefined
-    expect(finalState.swapRouter02).to.not.be.undefined
+    expect(finalState.swapRouter03).to.not.be.undefined
 
-    const tetherContract = await ethers.getContractAt("Tether", tetherAddress);
     const usdcContract = await ethers.getContractAt("USDCoin", usdcAddress);
-    const uniswapFactory = UniswapV3Factory__factory.connect(finalState.v3CoreFactoryAddress ?? '', signer);
-    const swapRouter = SwapRouter__factory.connect(finalState.swapRouter02 ?? '', signer);
+    const swapRouter = SwapRouter__factory.connect(finalState.swapRouter03 ?? '', signer);
 
-    await tetherContract.connect(signer2).approve(finalState.swapRouter02 ?? '', ethers.parseEther("100"));
-
-    const tokenIn = tetherAddress;
-    const tokenOut = usdcAddress;
-    const poolAddress = await uniswapFactory.getPool(tokenIn, tokenOut, FeeAmount.LOW);
-    const poolContract = UniswapV3Pool__factory.connect(poolAddress, signer);
+    await usdcContract.connect(signer).approve(finalState.swapRouter03 ?? '', ethers.parseEther("100"));
 
     const params: ISwapRouter.ExactInputSingleParamsStruct = {
-      tokenIn: tokenIn,
-      tokenOut: tokenOut,
+      tokenIn: usdcAddress,
+      tokenOut: tetherAddress,
       fee: FeeAmount.LOW,
       recipient: await signer.getAddress(),
       deadline: Math.floor(Date.now() / 1000) + (60 * 10),
@@ -168,7 +161,7 @@ describe('Test uniswap functions', () => {
       sqrtPriceLimitX96: 0
     };
 
-    const tx = await swapRouter.connect(signer2).exactInputSingle(params, { gasLimit: 1000000 });
+    const tx = await swapRouter.connect(signer).exactInputSingle(params);
     await tx.wait();
 
   });
