@@ -15,6 +15,8 @@ export interface MigrationState {
   readonly v3MigratorAddress?: string
   readonly v3StakerAddress?: string
   readonly nonfungibleTokenPositionManagerAddress?: string
+  readonly permit2?: string
+  readonly universalRouter?: string
 }
 
 export type StepOutput = { message: string; hash?: string; address?: string }

@@ -11,7 +11,6 @@ import { NonfungiblePositionManager__factory, SwapRouter__factory } from '../typ
 import { UniswapV3Pool } from '../typechain-types/v3-core/artifacts/contracts';
 import { INonfungiblePositionManager } from '../typechain-types/v3-periphery/artifacts/contracts/NonfungiblePositionManager';
 import { ISwapRouter } from '../typechain-types/v3-periphery/artifacts/contracts/SwapRouter';
-import { produceWithPatches } from 'immer';
 
 bn.config({ EXPONENTIAL_AT: 999999, DECIMAL_PLACES: 40 })
 
@@ -115,7 +114,6 @@ describe('Test uniswap functions', () => {
     await usdcContract.connect(signer1).approve(finalState.nonfungibleTokenPositionManagerAddress ?? '', ethers.parseEther("1000"));
 
     const poolData = await getPoolData(poolContract);
-    console.log("pool data before add liquidity: ", poolData);
 
     const tickLower = nearestUsableTick(Number(poolData.tick), Number(poolData.tickSpacing)) - Number(poolData.tickSpacing) * 2;
     const tickUpper = nearestUsableTick(Number(poolData.tick), Number(poolData.tickSpacing)) + Number(poolData.tickSpacing) * 2;
@@ -138,7 +136,7 @@ describe('Test uniswap functions', () => {
     await tx.wait();
 
     const newPoolData = await getPoolData(poolContract);
-    console.log("pool data before add liquidity: ", newPoolData);
+    expect(newPoolData.liquidity).to.be.gt(poolData.liquidity);
   });
 
   it('Swap usdc for usdt', async () => {

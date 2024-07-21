@@ -52,6 +52,7 @@ export default function createDeployContractStep({
       const contractAddr = await contract.getAddress();
 
       state[key] = contractAddr
+      console.log(`${key}: ${contractAddr}`);
 
       return [
         {
