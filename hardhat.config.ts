@@ -26,20 +26,20 @@ const config: HardhatUserConfig = {
       initialDate: "0",
       allowUnlimitedContractSize: true,
       initialBaseFeePerGas: 0,
-      accounts: {
-        mnemonic: process.env.MNEMONIC || DEFAULT_MNEMONIC,
-        path: "m/44'/60'/0'/0",
-        initialIndex: 0,
-        count: 20,
-      },
-      // accounts: [{
-      //   privateKey: `0x${privateKey}`,
-      //   balance: '1000000000000000000000'
-      // }],
-      // forking: {
-      //   url: "https://rpc-testnet.biteigen.xyz",
-      //   blockNumber: 395435
-      // }
+      // accounts: {
+      //   mnemonic: process.env.MNEMONIC || DEFAULT_MNEMONIC,
+      //   path: "m/44'/60'/0'/0",
+      //   initialIndex: 0,
+      //   count: 20,
+      // },
+      accounts: [{
+        privateKey: `0x${privateKey}`,
+        balance: '1000000000000000000000'
+      }],
+      forking: {
+        url: "https://rpc-testnet.biteigen.xyz",
+        blockNumber: 581933
+      }
     },
     biteigen: {
       url: "https://rpc-testnet.biteigen.xyz",
